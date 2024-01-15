@@ -82,3 +82,36 @@ phylib_table *phylib_new_table( void ){
 
     return new_table;
 }
+//part 2 utility functions
+void phylib_copy_object( phylib_object **dest, phylib_object **src ){
+    //phylib_obj new_obj = malloc(sizeof(phylib_object));
+}
+
+phylib_table *phylib_copy_table( phylib_table *table ){
+
+}
+void phylib_add_object( phylib_table *table, phylib_object *object ){
+
+}
+void phylib_free_table( phylib_table *table ){
+
+}
+phylib_coord phylib_sub( phylib_coord c1, phylib_coord c2 ){
+    phylib_coord sub;
+    sub.x = c1.x - c2.x;
+    sub.y = c1.y - c2.y;
+    return sub;
+}
+double phylib_length( phylib_coord c ){
+    double length = sqrt(c.x * c.x + c.y * c.y);
+    return length;
+}
+double phylib_dot_product( phylib_coord a, phylib_coord b ){
+    double dot_product = 0;
+    dot_product += (a.x * b.x);
+    dot_product += (a.y * b.y);
+    return dot_product;
+}
+double phylib_distance( phylib_object *obj1, phylib_object *obj2 ){
+
+}
