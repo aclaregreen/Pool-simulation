@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-
+//constants
 #define PHYLIB_BALL_RADIUS (28.5) // mm
 #define PHYLIB_BALL_DIAMETER (2*PHYLIB_BALL_RADIUS)
 
@@ -16,7 +16,7 @@
 #define PHYLIB_MAX_TIME (600) // s
 
 #define PHYLIB_MAX_OBJECTS (26)
-
+//given for part 1 header file
 typedef enum {
     PHYLIB_STILL_BALL = 0,
     PHYLIB_ROLLING_BALL = 1,
@@ -79,6 +79,7 @@ phylib_object *phylib_new_hcushion( double y );
 phylib_object *phylib_new_vcushion( double x );
 
 phylib_table *phylib_new_table( void );
+//part 2
 
 void phylib_copy_object( phylib_object **dest, phylib_object **src );
 phylib_table *phylib_copy_table( phylib_table *table );
@@ -95,5 +96,3 @@ unsigned char phylib_stopped( phylib_object *object );
 void phylib_bounce( phylib_object **a, phylib_object **b );
 unsigned char phylib_rolling( phylib_table *t );
 phylib_table *phylib_segment( phylib_table *table );
-
-void phylib_print_object( phylib_object *object );
