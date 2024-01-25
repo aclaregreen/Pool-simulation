@@ -227,6 +227,10 @@ void phylib_bounce( phylib_object **a, phylib_object **b ){
             break;
         case PHYLIB_STILL_BALL:
             (*b)->type = PHYLIB_ROLLING_BALL;
+            (*b)->obj.rolling_ball.vel.x = 0.0;
+            (*b)->obj.rolling_ball.vel.y = 0.0;
+            (*b)->obj.rolling_ball.acc.x = 0.0;
+            (*b)->obj.rolling_ball.acc.y = 0.0;
             (*b)->obj.rolling_ball.number = (*b)->obj.still_ball.number;
             (*b)->obj.rolling_ball.pos = (*b)->obj.still_ball.pos;
         case PHYLIB_ROLLING_BALL: {
