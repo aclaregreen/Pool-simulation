@@ -69,7 +69,7 @@ phylib_table *phylib_new_table( void ){
     for (int i = 0; i < PHYLIB_MAX_OBJECTS; i++){
         new_table->object[i] = NULL;
     }
-    new_table->time = PHYLIB_SIM_RATE;
+    new_table->time = 0.0;
     new_table->object[0] = phylib_new_hcushion(0.0);
     new_table->object[1] = phylib_new_hcushion(PHYLIB_TABLE_LENGTH);
     new_table->object[2] = phylib_new_vcushion(0.0);
@@ -163,10 +163,10 @@ double phylib_distance( phylib_object *obj1, phylib_object *obj2 ){
         distance = phylib_length(phylib_sub(obj1_pos, obj2_pos)) - PHYLIB_HOLE_RADIUS;
     } else if (obj2->type == PHYLIB_HCUSHION){
         double obj2_pos = obj2->obj.hcushion.y;
-        distance = fabs(obj2_pos - obj1_pos.y - PHYLIB_BALL_RADIUS);
+        distance = fabs(obj2_pos - obj1_pos.y) - PHYLIB_BALL_RADIUS;
     } else if (obj2->type == PHYLIB_VCUSHION){
         double obj2_pos = obj2->obj.vcushion.x;
-        distance = fabs(obj2_pos - obj1_pos.x - PHYLIB_BALL_RADIUS);
+        distance = fabs(obj2_pos - obj1_pos.x) - PHYLIB_BALL_RADIUS;
     } else {
         return -1;
     }
@@ -208,17 +208,13 @@ unsigned char phylib_stopped( phylib_object *object ){
 void phylib_bounce( phylib_object **a, phylib_object **b ){
     switch((*b)->type){
         case PHYLIB_HCUSHION: {
-            double temp;
-            temp = (*a)->obj.rolling_ball.vel.y;
-            (*a)->obj.rolling_ball.vel.y = (*a)->obj.rolling_ball.acc.y;
-            (*a)->obj.rolling_ball.acc.y = temp;
+            (*a)->obj.rolling_ball.vel.y *= -1;//(*a)->obj.rolling_ball.acc.y;
+            (*a)->obj.rolling_ball.acc.y *= -1;//temp;
             break;
         }
         case PHYLIB_VCUSHION: {
-            double temp;
-            temp = (*a)->obj.rolling_ball.vel.x;
-            (*a)->obj.rolling_ball.vel.x = (*a)->obj.rolling_ball.acc.x;
-            (*a)->obj.rolling_ball.acc.x = temp;
+            (*a)->obj.rolling_ball.vel.x *= -1;
+            (*a)->obj.rolling_ball.acc.x *= -1;
             break;
         }
         case PHYLIB_HOLE:
@@ -277,12 +273,10 @@ phylib_table *phylib_segment( phylib_table *table ){
     phylib_table * new_table = phylib_copy_table(table);
 
     while (new_table->time < PHYLIB_MAX_TIME){
+        new_table->time += PHYLIB_SIM_RATE;
         for (int i = 0; i < PHYLIB_MAX_OBJECTS; i++){
             if (new_table->object[i] != NULL && new_table->object[i]->type == PHYLIB_ROLLING_BALL){
                 phylib_object *ball = new_table->object[i];
-                if (phylib_stopped(ball)){
-                    return new_table;
-                }
                 phylib_object * new_ball = NULL;
                 phylib_copy_object(&new_ball, &ball);
                 phylib_roll(new_ball, ball, PHYLIB_SIM_RATE);
@@ -290,7 +284,13 @@ phylib_table *phylib_segment( phylib_table *table ){
                 
                 phylib_copy_object(&new_table->object[i], &new_ball);
                 free(new_ball);
-
+            }
+        }
+        for (int i = 0; i < PHYLIB_MAX_OBJECTS; i++){
+            if (new_table->object[i] != NULL && new_table->object[i]->type == PHYLIB_ROLLING_BALL){
+                if (phylib_stopped(new_table->object[i])){
+                    return new_table;
+                }
                 for (int j = 0; j < PHYLIB_MAX_OBJECTS; j++){
                     if (new_table->object[j] != NULL){
                         double distance = phylib_distance(new_table->object[i], new_table->object[j]);
@@ -304,7 +304,6 @@ phylib_table *phylib_segment( phylib_table *table ){
                 }
             }
         }
-        new_table->time += PHYLIB_SIM_RATE;
     }
     return new_table;
 }
